@@ -1,8 +1,8 @@
-*{
+* {
     box-sizing: border-box;
 }
 
-body{
+body {
     margin: 0;
     width: 100vw;
     height: 100vh;
@@ -11,16 +11,16 @@ body{
     align-items: center;
 }
 
-.container-principal{
+/*PÁGINA PRINCIPAL DO CONVITE*/
+
+.container-principal {
     background-color: rgb(245, 183, 245);
-    background-image: url(imagens/1.jpeg);
+    background-image: url(imagens/fundo-flores.jpg);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: 100% center;
-    position: relative;
-    width: 90%;
     max-width: 500px;
-    height: 80%;
+    min-height: 80vh;
     border-radius: 12px;
     color: #42567b;
     display: flex;
@@ -29,13 +29,14 @@ body{
     overflow: hidden;
 }
 
-.elementos-nao-interativos{
+.elementos-nao-interativos {
     width: 100%;
     max-width: 500px;
     margin: 0px;
 }
 
-.elementos-nao-interativos h1 , h2{
+.elementos-nao-interativos h1,
+h2 {
     font-family: 'Pinyon Script', cursive;
     font-size: 80px;
     font-weight: 100;
@@ -43,25 +44,48 @@ body{
     margin: 10px;
 }
 
-.coroa{
+.elementos-nao-interativos h4 {
+    font-family: 'Playwrite US Modern', cursive;
+    font-size: 15px;
+    color: black;
+    font-weight: 100;
+    margin: 10px;
+}
+
+.coroa {
     width: 30%;
     height: 30%;
 }
 
-.elementos-interativos{
-   display: flex;
+.horario {
+    width: 80%;
+}
+
+.aviso {
+    color: #000000;
+    font-family: 'Playwrite US Modern', cursive;
+    text-decoration-line: underline;
+}
+
+.elementos-interativos {
+    display: flex;
     justify-content: center;
     align-items: flex-start;
     gap: 20px;
-    margin-top: 20px;
+    margin-top: 30px;
+    padding: 10px;
 }
 
-.elementos-interativos div{
-   display: flex;
+
+.elementos-interativos div {
+    display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
+}
 
+.elementos-interativos p {
+    color: #000000;
+    font-family: 'Playwrite US Modern', cursive;
 }
 
 .botao {
@@ -73,13 +97,68 @@ body{
     border: none;
     border-radius: 50%;
     font-size: 20px;
-    color: #6b287c;
+    background-color: #42567b;
+    color: #000000;
     text-decoration: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
 .botao:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    background-color: #d495e5;
+    color: white;
+}
+
+/*PÁGINA DE SUGESTÕES DE PRESENTES*/
+
+.container-presentes {
+    width: 90%;
+    max-width: 400px;
+    min-height: 80vh;
+    border-radius: 12px;
+    color: #42567b;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.container-presentes img{
+    width: 100%;
+    height: 100%;
+}
+
+.baixar-lista{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.baixar-lista p{
+    color: #000000;
+    font-family: 'Playwrite US Modern', cursive;
+}
+
+.botao-baixar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    background-color: #42567b;
+    color: #000000;
+    text-decoration: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.botao-baixar:hover {
     transform: scale(1.1);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     background-color: #d495e5;
