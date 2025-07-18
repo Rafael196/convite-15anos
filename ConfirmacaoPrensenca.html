@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convite Virtual</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container-presenca">
+        <form action="">
+            <h1 class="texto-presenca">Preencha com seu nome e telefone</h1>
+            <input class="barra-informacao" type="text" id="nome" placeholder="Informe seu nome completo" required>
+            <input class="barra-informacao" type="tel" id="telefone" placeholder="Informe seu número de telefone"
+                required>
+            <button class="botao-enviar" type="submit">Enviar</button>
+        </form>
+        <p>-------------------------------------------------------------------------</p>
+        <h2 class="texto-presenca">Quem mais vai com você?</h2>
+
+        <div id="lista-membros" class="membros-container">
+
+        </div>
+
+        <button class="adicionar-membro" id="btnAdicionar">
+            <i class="fa-solid fa-plus"></i> Adicionar acompanhante
+        </button>
+
+        <button class="botao-enviar" id="btnFinalizar">
+            Tudo certo
+        </button>
+    </div>
+    <script src="https://unpkg.com/imask"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCY9Lpp2m5U2gHwauO-OrwjPml-9mjsDAg",
+            authDomain: "conviteleticia.firebaseapp.com",
+            projectId: "conviteleticia",
+            storageBucket: "conviteleticia.firebasestorage.app",
+            messagingSenderId: "369781535383",
+            appId: "1:369781535383:web:ad16e7f7c2277f67f9efd2"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const telefoneInput = document.getElementById("telefone");
+
+        IMask(telefoneInput, {
+            mask: '(00) 00000-0000'
+        });
+
+        const form = document.querySelector("form");
+        const nomeInput = document.getElementById("nome");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const nome = nomeInput.value.trim();
+            const telefone = telefoneInput.value.trim();
+
+            if (!nome || !telefone) {
+                alert("Por favor, preencha seu nome e telefone.");
+                return;
+            }
+
+            try {
+                await db.collection("confirmacoes").add({
+                    nome: nome,
+                    telefone: telefone,
+                    data: firebase.firestore.Timestamp.now()
+                });
+
+                alert("Presença confirmada com sucesso! 🎉");
+                form.reset();
+            } catch (error) {
+                console.error("Erro ao salvar confirmação:", error);
+                alert("Erro ao confirmar. Tente novamente mais tarde.");
+            }
+        });
+
+        const listaMembros = document.getElementById("lista-membros");
+        const btnAdicionar = document.getElementById("btnAdicionar");
+        const btnFinalizar = document.getElementById("btnFinalizar");
+
+        let membros = [];
+
+        btnAdicionar.addEventListener("click", () => {
+            const nome = prompt("Digite o nome do acompanhante:");
+            if (nome) {
+                membros.push(nome);
+                renderizarMembros();
+            }
+        });
+
+        function renderizarMembros() {
+            listaMembros.innerHTML = "";
+            membros.forEach((membro, index) => {
+                const div = document.createElement("div");
+                div.className = "card-membro";
+                div.innerHTML = `
+      <span>${membro}</span>
+      <div style="display: flex; gap: 10px;">
+        <i class="fa-solid fa-pen-to-square" title="Editar" onclick="editarMembro(${index})"></i>
+        <i class="fa-solid fa-trash" title="Remover" onclick="deletarMembro(${index})"></i>
+      </div>
+    `;
+                listaMembros.appendChild(div);
+            });
+        }
+
+        window.editarMembro = function (index) {
+            const novoNome = prompt("Editar nome do acompanhante:", membros[index]);
+            if (novoNome) {
+                membros[index] = novoNome;
+                renderizarMembros();
+            }
+        };
+
+        window.deletarMembro = function (index) {
+            const confirmacao = confirm(`Deseja remover "${membros[index]}" da lista?`);
+            if (confirmacao) {
+                membros.splice(index, 1);
+                renderizarMembros();
+            }
+        };
+
+        btnFinalizar.addEventListener("click", async () => {
+            const nome = document.getElementById("nome").value.trim();
+            const telefone = document.getElementById("telefone").value.trim();
+
+            if (!nome || !telefone) {
+                alert("Preencha seu nome e telefone antes de confirmar.");
+                return;
+            }
+
+            try {
+                await db.collection("confirmacoes").add({
+                    nome: nome,
+                    telefone: telefone,
+                    acompanhantes: membros,
+                    data: firebase.firestore.Timestamp.now()
+                });
+
+                alert("Confirmação enviada com sucesso!");
+                membros = [];
+                renderizarMembros();
+
+                // Redireciona para página de agradecimento
+                window.location.href = "obrigado.html";
+            } catch (error) {
+                console.error("Erro ao salvar confirmação:", error);
+                alert("Erro ao confirmar. Tente novamente mais tarde.");
+            }
+        });
+    </script>
+</body>
+
+</html>
