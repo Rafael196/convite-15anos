@@ -164,3 +164,116 @@ h2 {
     background-color: #d495e5;
     color: white;
 }
+
+/*PÁGINA DE CONFIRMAÇÃO DE PRESENÇA*/
+
+.container-presenca {
+            background-color: white;
+            max-width: 500px;
+            width: 90%;
+            min-height: 80vh;
+            border-radius: 16px;
+            padding: 30px 20px;
+            color: #7b2d91;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            align-items: center;
+            box-shadow: 0 8px 24px rgba(123, 45, 145, 0.2);
+        }
+
+        form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .barra-informacao {
+            width: 80%;
+            margin: 5px;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: 'Playwrite US Modern', cursive;
+            transition: border-color 0.3s;
+        }
+
+        .barra-informacao:focus {
+            border-color: #a34cc3;
+            outline: none;
+        }
+
+        .botao-enviar {
+            background: linear-gradient(90deg, #a34cc3, #d47ddf);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 25px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: 0.3s, transform 0.2s;
+        }
+
+        .botao-enviar:hover {
+            background: linear-gradient(90deg, #8d35ad, #c26fd6);
+            transform: scale(1.05);
+        }
+
+        .texto-presenca{
+            font-family: 'Playwrite US Modern', cursive;
+            font-size: 20px;
+            text-shadow: none;
+            font-weight: bold;
+        }
+
+        .adicionar-membro {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: transparent;
+            border: 2px dashed #a34cc3;
+            color: #a34cc3;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .adicionar-membro:hover {
+            background-color: #f0d6f8;
+            transform: scale(1.05);
+        }
+
+        .membros-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .card-membro {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f7f2fa;
+            border: 1px solid #d4b7e6;
+            border-radius: 12px;
+            padding: 15px 20px;
+            font-family: 'Playwrite US Modern', cursive;
+            font-size: 16px;
+            color: #6b298b;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-membro i {
+            cursor: pointer;
+            font-size: 18px;
+            color: #9b30c1;
+            transition: transform 0.2s;
+        }
+
+        .card-membro i:hover {
+            transform: scale(1.2);
+        }
