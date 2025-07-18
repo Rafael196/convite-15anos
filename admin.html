@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Confirmados</title>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f3e6f5;
+            padding: 20px;
+            color: #4d2062;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        h1 {
+            text-align: center;
+            color: #9b30c1;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .item {
+            border-bottom: 1px solid #ddd;
+            padding: 15px 0;
+        }
+
+        .item:last-child {
+            border-bottom: none;
+        }
+
+        .acompanhantes {
+            margin-left: 15px;
+            color: #6c3483;
+        }
+
+        button {
+            margin: 20px 10px 0 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            background-color: #9b30c1;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #7c279f;
+        }
+
+        #senha-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #senha-container input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        #mensagem-erro {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="senha-container">
+        <h2>Área restrita</h2>
+        <input type="password" id="senha" placeholder="Digite a senha de acesso" />
+        <button onclick="verificarSenha()">Entrar</button>
+        <div id="mensagem-erro"></div>
+    </div>
+
+    <div class="hidden" id="conteudo-principal">
+        <h1>Lista de Confirmados</h1>
+        <div class="container" id="listaConfirmados">Carregando dados...</div>
+        <div style="text-align: center;">
+            <button onclick="carregarConfirmados()">Atualizar</button>
+            <button onclick="baixarLista()">Baixar Lista</button>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCY9Lpp2m5U2gHwauO-OrwjPml-9mjsDAg",
+            authDomain: "conviteleticia.firebaseapp.com",
+            projectId: "conviteleticia",
+            storageBucket: "conviteleticia.firebasestorage.app",
+            messagingSenderId: "369781535383",
+            appId: "1:369781535383:web:ad16e7f7c2277f67f9efd2"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        function verificarSenha() {
+            const senha = document.getElementById("senha").value;
+            const erro = document.getElementById("mensagem-erro");
+            if (senha === "admin15") {
+                document.getElementById("senha-container").style.display = "none";
+                document.getElementById("conteudo-principal").classList.remove("hidden");
+                carregarConfirmados();
+            } else {
+                erro.textContent = "Senha incorreta. Tente novamente.";
+            }
+        }
+
+        async function carregarConfirmados() {
+            const lista = document.getElementById("listaConfirmados");
+            lista.innerHTML = "Carregando dados...";
+
+            try {
+                const snapshot = await db.collection("confirmacoes").orderBy("data", "desc").get();
+
+                if (snapshot.empty) {
+                    lista.innerHTML = "<p>Nenhuma confirmação ainda.</p>";
+                    return;
+                }
+
+                lista.innerHTML = "";
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const acompanhantes = data.acompanhantes?.length
+                        ? `<div class="acompanhantes">Acompanhantes: ${data.acompanhantes.join(", ")}</div>`
+                        : `<div class="acompanhantes">Nenhum acompanhante</div>`;
+
+                    const dataFormatada = data.data?.toDate().toLocaleString("pt-BR") || "Sem data";
+
+                    lista.innerHTML += `
+            <div class="item">
+              <strong>Nome:</strong> ${data.nome}<br>
+              <strong>Telefone:</strong> ${data.telefone}<br>
+              ${acompanhantes}
+              <small><i>Confirmado em: ${dataFormatada}</i></small>
+            </div>
+          `;
+                });
+            } catch (error) {
+                console.error("Erro ao carregar confirmados:", error);
+                lista.innerHTML = "<p>Erro ao carregar dados.</p>";
+            }
+        }
+
+        async function baixarLista() {
+            try {
+                const snapshot = await db.collection("confirmacoes").orderBy("data", "desc").get();
+
+                if (snapshot.empty) {
+                    alert("Nenhuma confirmação para exportar.");
+                    return;
+                }
+
+                // Inicializa jsPDF
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                let y = 15;
+                doc.setFontSize(14);
+                doc.text("Lista de Confirmados - Festa de 15 anos", 15, y);
+                y += 10;
+
+                snapshot.forEach((docData, index) => {
+                    const d = docData.data();
+                    const acompanhantes = d.acompanhantes?.length ? d.acompanhantes.join(", ") : "Nenhum";
+                    const data = d.data?.toDate().toLocaleString("pt-BR") || "Sem data";
+
+                    const bloco =
+                        `#${index + 1}
+Nome: ${d.nome}
+Telefone: ${d.telefone}
+Acompanhantes: ${acompanhantes}
+Confirmado em: ${data}`;
+
+                    const linhas = doc.splitTextToSize(bloco, 180);
+                    doc.text(linhas, 15, y);
+                    y += linhas.length * 8;
+
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 15;
+                    }
+                });
+
+                doc.save("lista_confirmados.pdf");
+
+            } catch (error) {
+                console.error("Erro ao gerar PDF:", error);
+                alert("Erro ao gerar o arquivo PDF.");
+            }
+        }
+    </script>
+</body>
+
+</html>
